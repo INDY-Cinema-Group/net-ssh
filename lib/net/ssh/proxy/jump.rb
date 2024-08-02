@@ -37,6 +37,7 @@ module Net
           first_jump, extra_jumps = jump_proxies.split(",", 2)
           config = connection_options && connection_options[:config]
           uri = URI.parse("ssh://#{first_jump}")
+          key = connection_options[:keys]&.first
 
           template = "ssh".dup
           template << " -l #{uri.user}"    if uri.user
@@ -44,6 +45,8 @@ module Net
           template << " -J #{extra_jumps}" if extra_jumps
           template << " -F #{config}" if config != true && config
           template << " -W %h:%p "
+          template << " -i #{key} " if key
+
           template << uri.host
 
           @command_line_template = template
